@@ -39,8 +39,35 @@ ORDER BY total_days_visted DESC;
 
 ## Question 3: What was the first item from the menu purchased by each customer?
 ````sql
+WITH order_cte AS
+(
+SELECT
+	sales.customer_id,
+    sales.order_date,
+    menu.product_name,
+    DENSE_RANK() OVER(
+      PARTITION BY sales.customer_id
+      ORDER BY sales.order_date) AS RANK
+FROM dannys_diner.sales
+LEFT JOIN dannys_diner.menu
+ON sales.product_id = menu.product_id
+)
 
+SELECT 
+	DISTINCT customer_id,
+    product_name
+FROM order_cte
+WHERE rank= 1;
 ````
+#### Answer
+| customer_id | product_name |
+|-------------|-------------------|
+| A           | curry             |
+| A           | sushi             |
+| B           | curry             |
+| C           | ramen             |
+
+*Customer A ordered twice at the same time
 ## Question 4: What is the most purchased item on the menu and how many times was it purchased by all customers?
 ````sql
 SELECT
@@ -60,8 +87,36 @@ LIMIT 1
 
 ## Question 5: Which item was the most popular for each customer?
 ````sql
-
+WITH most_popular_item_cte AS
+(
+  SELECT 
+  	sales.customer_id,
+  	menu.product_name,
+  	COUNT(menu.product_id) AS number_ordered,
+  	RANK() OVER (
+  		PARTITION BY sales.customer_id 
+  		ORDER BY COUNT(menu.product_id) DESC) AS popularity_rank
+  	FROM dannys_diner.sales
+  JOIN dannys_diner.menu
+  ON sales.product_id = menu.product_id
+  GROUP BY sales.customer_id,menu.product_name
+)
+SELECT
+  customer_id,
+  product_name,
+  number_ordered
+FROM most_popular_item_cte
+WHERE popularity_rank = 1
 ````
+####Answer
+| customer_id | product_name      | number_ordered|
+|-------------|-------------------|---------------|
+| A           | ramen             | 3             |
+| B           | ramen             | 2             |
+| B           | curry             | 2             |
+| B           | sushi             | 2             |
+| C           | ramen             | 3             |
+Customer B had a tie for 3 of the products
 ## Question 6: Which item was purchased first by the customer after they became a member?
 ````sql
 
