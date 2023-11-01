@@ -1,4 +1,4 @@
-# Week 1 Case Study: Danny's Diner
+# Week 2 Case Study: Pizza_Runner
 <a href="https://8weeksqlchallenge.com/case-study-2/"> <img src= "https://8weeksqlchallenge.com/images/case-study-designs/2.png" width="500" height="520" alt="image" target="_blank"> </a>
 ## Pizza Metrics
 ### Question 1: How many pizzas were ordered?
